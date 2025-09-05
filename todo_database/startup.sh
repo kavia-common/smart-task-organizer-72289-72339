@@ -121,6 +121,21 @@ export MYSQL_DB="${DB_NAME}"
 export MYSQL_PORT="${DB_PORT}"
 EOF
 
+# Optionally apply schema.sql if present
+if [ -f "schema.sql" ]; then
+    echo ""
+    echo "Applying schema.sql to database '${DB_NAME}'..."
+    if sudo mysql --socket=/var/run/mysqld/mysqld.sock -u root -p${DB_PASSWORD} ${DB_NAME} < schema.sql; then
+        echo "✓ Schema applied successfully."
+    else
+        echo "⚠ Failed to apply schema.sql. Please check the SQL file for errors."
+    fi
+else
+    echo ""
+    echo "No schema.sql found; skipping schema application."
+fi
+
+echo ""
 echo "MySQL setup complete!"
 echo "Database: ${DB_NAME}"
 echo "Root user: root (password: ${DB_PASSWORD})"
